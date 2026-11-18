@@ -1,0 +1,21 @@
+services:
+  backend:
+    build: ./shoestop-backend
+    container_name: shoestop-backend
+    env_file: ./shoestop-backend/.env   # secrets image me nahi, runtime par aate hain
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./shoestop-frontend
+      args:
+        # <PUBLIC_IP> ki jagah apni VM ka public IP daalo (ya .env me VITE_API_URL set karo)
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:5000}
+    container_name: shoestop-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
